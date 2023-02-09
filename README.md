@@ -1,1 +1,1 @@
-Repository for 0x00. shell basics
+Repository for alx-systen_engineering-devops
