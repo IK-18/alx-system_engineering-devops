@@ -1,2 +1,2 @@
 #!/bin/bash
-mv Best /tmp/u
+mv "[[:upper]]" /tmp/u
