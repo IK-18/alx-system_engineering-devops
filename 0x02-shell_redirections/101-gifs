@@ -1,0 +1,2 @@
+#!/bin/bash
+find -name '*.gif*' -exec printf '%f\n' {} \; | sort -f
