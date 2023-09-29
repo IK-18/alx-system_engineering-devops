@@ -1,4 +1,4 @@
-#1/usr/bin/env bash
+#!/usr/bin/env bash
 # This script displays info about files in the directory
 
 files=$(ls)
