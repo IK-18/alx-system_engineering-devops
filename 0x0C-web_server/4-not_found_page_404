@@ -2,14 +2,13 @@
 # Installs nginx and configures it on a remote server
 
 apt-get -y update
-apt-get -y nginx
+apt-get install -y nginx
 sudo ufw allow 'Nginx HTTP'
 sudo mkdir -p /var/www/html/
 sudo chmod -R 755 /var/www
 echo 'Hello World!' > /var/www/html/index.html
 echo "Ceci n'est pas une page" > 404.html
-SERVER_CONFIG=\
-"server {
+echo "server {
 	listen 80 default_server;
 	listen [::]:80 default_server;
 	root /var/www/html;
@@ -25,8 +24,7 @@ SERVER_CONFIG=\
 	location = /404.html {
 		internal;
 	}
-}"
-bash -c "echo -e '$SERVER_CONFIG' > /etc/nginx/sites-enabled/default"
+}" | sudo tee /etc/nginx/sites-available/default
 if [ "$(pgrep -c nginx)" -le 0 ]; then
 	service nginx start
 else
