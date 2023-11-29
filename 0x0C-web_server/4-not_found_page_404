@@ -24,7 +24,7 @@ echo "server {
 	location = /404.html {
 		internal;
 	}
-}" | sudo tee /etc/nginx/sites-available/default
+}" | sudo tee /etc/nginx/sites-available/default > /dev/null
 if [ "$(pgrep -c nginx)" -le 0 ]; then
 	service nginx start
 else
