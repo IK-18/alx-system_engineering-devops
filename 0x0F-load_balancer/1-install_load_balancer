@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# Install and configure HAproxy on server
+
+
+apt-get install -y --no-install-recommends software-properties-common
+add-apt-repository -y ppa:vbernat/haproxy-2.0
+apt-get -y install haproxy=2.0.\*
+
+echo "\nENABLED=1" >> /etc/default/haproxy
+echo "
+	listen load_balancer
+	bind *:80
+	mode http
+	balance roundrobin
+	server 286160-web-01 54.145.239.111:80 check
+	server 286160-web-02 3.90.65.203:80 check
+" >> /etc/haproxy/haproxy.cfg
+service haproxy start

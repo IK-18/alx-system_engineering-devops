@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+# Installs nginx and configures it on a remote server
+
+apt-get -y update
+apt-get install -y nginx
+sudo ufw allow 'Nginx HTTP'
+sudo mkdir -p /var/www/html/
+sudo chmod -R 755 /var/www
+echo 'Hello World!' > /var/www/html/index.html
+echo "Ceci n'est pas une page" > /var/www/html/404.html
+echo "server {
+	listen 80 default_server;
+	listen [::]:80 default_server;
+	root /var/www/html;
+	index index.html index.htm index.nginx-debian.html;
+	server_name _;
+	location /redirect_me {
+		rewrite ^ https://github.com/IK-18 permanent;
+	}
+	location / {
+		try_files \$uri \$uri/ =404;
+	}
+	error_page 404 /404.html;
+	location = /404.html {
+		internal;
+	}
+}" | sudo tee /etc/nginx/sites-available/default > /dev/null
+sed -i "s/include \/etc\/nginx\/sites-enabled\/\*;/include \/etc\/nginx\/sites-enabled\/\*;\n\tadd_header X-Served-By \"$HOSTNAME\";/" /etc/nginx/nginx.conf
+if [ "$(pgrep -c nginx)" -le 0 ]; then
+	service nginx start
+else
+	service nginx restart
+fi
