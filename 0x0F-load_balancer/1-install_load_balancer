@@ -2,17 +2,36 @@
 # Install and configure HAproxy on server
 
 
-apt-get install -y --no-install-recommends software-properties-common
-add-apt-repository -y ppa:vbernat/haproxy-2.0
-apt-get -y install haproxy=2.0.\*
+sudo apt update
+sudo apt-get install -y nginx
+sudo apt-get install -y --no-install-recommends software-properties-common
+sudo add-apt-repository -y ppa:vbernat/haproxy-2.0
+sudo apt-get install -y haproxy=2.0.\*
 
-echo "\nENABLED=1" >> /etc/default/haproxy
-echo "
-	listen load_balancer
-	bind *:80
-	mode http
-	balance roundrobin
-	server 286160-web-01 54.145.239.111:80 check
-	server 286160-web-02 3.90.65.203:80 check
-" >> /etc/haproxy/haproxy.cfg
-service haproxy start
+echo "server {
+        listen 80;
+        server_name _;
+
+        location / {
+                proxy_pass http://localhost:8080;
+        }
+}" | sudo tee /etc/nginx/sites-available/default > /dev/null
+echo "frontend http_front
+        bind *:8080
+        default_backend backend_servers
+
+backend backend_servers
+        balance roundrobin
+        server server1 18.210.16.13:80 check
+        server server2 18.204.7.67:80 check
+" | sudo tee /etc/haproxy/haproxy.cfg > /dev/null
+if [ "$(pgrep -c nginx)" -le 0 ]; then
+        service nginx start
+else
+        service nginx restart
+fi
+if [ "$(pgrep -c haproxy)" -le 0 ]; then
+        service haproxy start
+else
+        service haproxy restart
+fi
