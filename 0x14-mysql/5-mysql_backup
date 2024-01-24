@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+if [$# -eq 0 ]; then
+	echo "Usage: ./5-mysql_backup PASSWORD"
+	exit 1
+fi
+
+mysqldump -uroot -p"$1" --all-databases > backup.sql
+
+tar -czvf "$(date +%d-%m-%Y)".tar.gz backup.sql
