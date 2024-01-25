@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # generates a tar-gzipped archive of the backup file
-if [$# -eq 0 ]; then
+if [ $# -eq 0 ]; then
 	echo "Usage: ./5-mysql_backup PASSWORD"
 	exit 1
 fi
